@@ -2,7 +2,7 @@
 
 # Parâmetros nomeados: 
 # um dicionário de valores com o nome precedido por um & e seguido pelo seu valor
-&N 2 
+&N 4
 
 # Parâmetros sequenciais:
 # aqueles valores referenciados como % no arquivo

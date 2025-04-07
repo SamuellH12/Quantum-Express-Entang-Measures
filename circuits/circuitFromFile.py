@@ -38,15 +38,18 @@ def parse_params_file(path: str):
 # the number of qubits
 # the number of classic bits
 # a list of operators and it's qubits and params (here params maybe be characters % or named params)
-# the tuple with the params read from the params file (if exists)
-# Be carefull if 'operator' == 'LAYER', it fields are different
-def parse_quantum_file(path: str):
+# the number of sequence params
+# a list of sequence params read from the params file (if exists)
+# (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
+def parse_quantum_file(path: str, named_params = {}):
     params_path = None
     num_qubits = None
     classical_bits = 0
     operators = []
     current_layer = None
     layer_repeat = 0
+    sequenc_params = []
+    num_of_params = 0
     
     try:
         with open(path, 'r') as f:
@@ -58,7 +61,15 @@ def parse_quantum_file(path: str):
                 
                 # header / cabeçalho
                 if line.startswith('Q '): num_qubits = int(line.split()[1])
-                elif line.startswith('PARAM '): params_path = line.split()[1]
+                elif line.startswith('PARAM '): 
+                    params_path = line.split()[1]
+                    nmd_params, seq_params = parse_params_file(params_path)
+
+                    sequenc_params = seq_params
+                    #named params by argument override the named params in file
+                    for k in nmd_params:
+                        if k not in named_params: 
+                            named_params[k] = nmd_params[k]
 
                 # Barrier
                 elif line.startswith('BAR'):
@@ -84,10 +95,20 @@ def parse_quantum_file(path: str):
                     parts = line.split()
                     layer_repeat = parts[1] #it can be a named parameter
                     current_layer = []
+
+                    if layer_repeat.startswith('&'):
+                        if layer_repeat in named_params:
+                            layer_repeat = named_params[layer_repeat]
+                        else: #if the named param dont exist, put the value 0
+                            print(f'Named parameter {layer_repeat} not found. Making it 0')
+                            layer_repeat = 0
+                            
+                    layer_repeat = int(layer_repeat)
                 
                 elif line.startswith('ENDLAYER'):
-                    # for _ in range(layer_repeat): # operators.extend(current_layer)
-                    operators.append({'operator':'LAYER', 'operatorList':current_layer, 'repeat':layer_repeat})
+                    for _ in range(layer_repeat): 
+                        operators.extend(current_layer)
+                    # operators.append({'operator':'LAYER', 'operatorList':current_layer, 'repeat':layer_repeat})
                     current_layer = None
                 
                 # others operators
@@ -101,38 +122,47 @@ def parse_quantum_file(path: str):
                     if op in ['x', 'y', 'z', 'h', 'rx', 'ry', 'rz', 'r']:
                         qubits = [int(parts[1])]
                         if len(parts) > 2:
-                            params = [p if p == '%' or p[0] == '&' else float(p) for p in parts[2:]]
+                            params = parts[2:]
                     
                     # controled gates
                     elif op in ['cx', 'cy', 'cz', 'ch', 'crx', 'cry', 'crz', 'cr']:
                         qubits = [int(parts[1]), int(parts[2])]
                         if len(parts) > 3:
-                            params = [p if p == '%' or p[0] == '&' else float(p) for p in parts[3:]]
+                            params = parts[3:]
                     
                     # toffoli gate
                     elif op in ['tfl']:
                         qubits = [int(parts[1]), int(parts[2]), int(parts[2])]
                     
                     else:
-                        print(f"Operator was not identified {line}")
+                        print(f"Operator not identified: {line}")
                         continue
+
+                    # get the named params and convert to float
+                    for i in range(len(params)):
+                        if params[i].startswith('&'):
+                            if params[i] in named_params: 
+                                    params[i] = named_params[params[i]]
+                            else:  #if the named param dont exist, make it %
+                                print(f'Named parameter {params[i]} not found. Making it a sequence parameter')
+                                params[i] = '%'
+                        elif params[i] != '%':
+                            params[i] = float(params[i])
 
                     # put it in operator or layers
                     operation = {'operator': op, 'qubits': qubits, 'params': params}
                     if current_layer != None: current_layer.append(operation)
                     else: operators.append(operation)
+
+                    num_of_params += params.count('%') * (layer_repeat if current_layer != None else 1)
             
     except FileNotFoundError:
         print(f"Circuit file not found {path}")
-        return (-1, -1, [], ({}, []))
+        return (-1, -1, [], -1, [])
     except:
         print(f"An error occur while reading the circuit file {path}")
-        return (-1, -1, [], ({}, []))
+        return (-1, -1, [], -1, [])
 
-    # if it has a params file, it get the params
-    params = ({}, [])
-    if params_path: 
-        params = parse_params_file(params_path)
 
-    return (num_qubits, classical_bits, operators, params)
+    return (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
 

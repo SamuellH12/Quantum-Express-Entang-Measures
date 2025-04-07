@@ -58,7 +58,7 @@ BAR
 # LAYER N [...] ENDLAYER
 # layers podem receber parâmetros nomeados tb
 
-LAYER 3
+LAYER &N
 h 0
 h 1
 h 2
@@ -72,7 +72,7 @@ cz 3 0
 rx 0 %
 rx 1 %
 rx 2 %
-rx 3 %
+rx 3 &N
 BAR
 ENDLAYER
 
