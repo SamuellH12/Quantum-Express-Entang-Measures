@@ -1,10 +1,10 @@
 
-
-# Lê os parâmetros do arquivo passado e retorna:
-# Read the params in the path file
-# ({}, [])
-# dict with named params, list of sequencial params
 def parse_params_file(path: str):
+    '''
+    Read the params in the path file and return a
+    dict with named params, list of sequencial params\n
+    ({}, [])
+    '''
     nameds = {}
     sequenc = []
     try:
@@ -34,16 +34,19 @@ def parse_params_file(path: str):
 
 
 # Lê o arquivo e retorna uma lista com os operadores 
-# Read the file and return a tuple with:
-# the number of qubits
-# the number of classic bits
-# a list of operators and it's qubits and params (here params maybe be characters % or named params)
-# the number of sequence params
-# a list of sequence params read from the params file (if exists)
-# (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
 def parse_quantum_file(path: str, named_params = {}):
+    '''
+    Read the file and return a tuple with:\n
+    \tint: the number of qubits\n
+    \tint: the number of classic bits\n
+    \tlist: a list of operators and its qubits and params 
+    (here params maybe be characters %)\n
+    \tint: the number of sequence params\n
+    \tlist: a list of sequence params read from the params file (if exists)\n
+    (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
+    '''
     params_path = None
-    num_qubits = None
+    num_qubits = 0
     classical_bits = 0
     operators = []
     current_layer = None
