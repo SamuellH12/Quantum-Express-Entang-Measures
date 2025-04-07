@@ -1,0 +1,86 @@
+# comentários pra facilitar a leitura e interpretação do arquivo
+# Primeiramente defina o cabeçalho com a quantidade de qubits e os parametros
+
+Q 4
+PARAM circuit0.param
+
+# PARAM path/To/File/With/Params.txt
+# Se não existir um arquivo de parametros 
+# e existirem parametros não definidos
+# eles serão requeridos no momento de criar 
+# o circuito como um array de floats
+#  ou como o path pra o arquivo de parametros
+# ################################## #
+
+# Você pode definir cada camada agora colocando os operadores como texto
+# operador qubit [qubit 2] [parametros] [parametros] [parametros]
+
+# Pauli gates + hadamard
+# operador qubit
+x 0
+y 1
+z 2
+h 3
+
+# Barrier ?
+BAR
+
+# operadores parametrizados
+# operador qubit parametros [parametros] [parametros]
+rx 0  1.57
+ry 1  1.57
+rz 2  1.57
+r  3  1.57 3.14 0
+
+# operadores controlados 
+cx 0 1
+cy 1 2
+cz 2 3
+ch 3 0
+tfl 0 1 2
+
+# operadores parametrizados controlados
+# operador qubit1 qubit2 parametros [parametros] [parametros]
+crx 0 1  1.57
+cry 1 2  1.57
+crz 2 3  1.57
+cr  3 0  1.57 3.14 0
+
+# parametros não definidos
+# é necessário colocar TODOS os parametros não definidos como %
+rx 0 %
+r 1 % % %
+r 2 % 1.57 %
+
+BAR
+# sistema de layers
+# define uma layer e então repete ela N vezes
+# LAYER N [...] ENDLAYER
+# layers podem receber parâmetros nomeados tb
+
+LAYER 3
+h 0
+h 1
+h 2
+h 3
+
+cz 0 1
+cz 1 2
+cz 2 3
+cz 3 0
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+BAR
+ENDLAYER
+
+# medidas
+# meassure qubit0 [qubit1] [qubit2] [...] [qubitN]
+# os valores serão mapeados aos bits clássicos automaticamente
+# pela ordem em que eles aparecem após o MEASSURE
+# se quiser pular um bit clássico coloque - no lugar
+# a quantidade de bits clássicos será definida automaticamente
+MEASSURE 0 1 2
+MEASSURE - - - 3
