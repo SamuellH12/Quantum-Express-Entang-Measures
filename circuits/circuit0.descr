@@ -30,7 +30,7 @@ BAR
 rx 0  1.57
 ry 1  1.57
 rz 2  1.57
-r  3  1.57 3.14 0
+ru 3  1.57 3.14 0
 
 # operadores controlados 
 cx 0 1
@@ -44,13 +44,13 @@ tfl 0 1 2
 crx 0 1  1.57
 cry 1 2  1.57
 crz 2 3  1.57
-cr  3 0  1.57 3.14 0
+cru 3 0  1.57 3.14 0
 
 # parametros não definidos
 # é necessário colocar TODOS os parametros não definidos como %
 rx 0 %
-r 1 % % %
-r 2 % 1.57 %
+ru 1 % % %
+ru 2 % 1.57 %
 
 BAR
 # sistema de layers

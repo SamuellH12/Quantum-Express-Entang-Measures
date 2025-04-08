@@ -1,3 +1,4 @@
+from qiskit import QuantumCircuit
 
 def parse_params_file(path: str):
     '''
@@ -121,17 +122,19 @@ def parse_quantum_file(path: str, named_params = {}):
                     qubits = []
                     params = []
                     
-                    # unitary gates
-                    if op in ['x', 'y', 'z', 'h', 'rx', 'ry', 'rz', 'r']:
+                    # single qubit gates
+                    if op in ['x', 'y', 'z', 'h', 'rx', 'ry', 'rz', 'ru']:
                         qubits = [int(parts[1])]
                         if len(parts) > 2:
                             params = parts[2:]
                     
                     # controled gates
-                    elif op in ['cx', 'cy', 'cz', 'ch', 'crx', 'cry', 'crz', 'cr']:
+                    elif op in ['cx', 'cy', 'cz', 'ch', 'crx', 'cry', 'crz', 'cru']:
                         qubits = [int(parts[1]), int(parts[2])]
                         if len(parts) > 3:
                             params = parts[3:]
+
+                        if op == 'cru' and len(params) <= 3: params.append(0)  # global fase if not provided
                     
                     # toffoli gate
                     elif op in ['tfl']:
@@ -169,3 +172,68 @@ def parse_quantum_file(path: str, named_params = {}):
 
     return (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
 
+def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : list, sequenc_params : list):
+    
+    qc = QuantumCircuit(num_qubits, classical_bits)
+
+    param_idx = 0
+
+    for at in operators:
+        op = at['operator']
+
+        if op == 'BAR':
+            qc.barrier()
+            continue
+        
+        qubits = at['qubits']
+        params = at['params']
+
+        for i in range(len(params)):
+            if params[i] == '%':
+                if param_idx < len(sequenc_params):
+                    params[i] = sequenc_params[param_idx] 
+                    param_idx += 1
+                else:
+                    print("!!! The amount of needed parameters is less than the number of circuit parameters !!!")
+                    print("!!! Circuit is incomplete !!!")
+                    return qc
+
+        try:
+            if op == 'MEASSURE':
+                for q, c in zip(qubits, params):
+                    qc.measure(q, c)
+            # single qubits operators
+            elif op == 'x': qc.x(*qubits)
+            elif op == 'y': qc.y(*qubits)
+            elif op == 'y': qc.z(*qubits)
+            elif op == 'h': qc.h(*qubits)
+            elif op == 'rx': qc.rx(*params, *qubits)
+            elif op == 'ry': qc.ry(*params, *qubits)
+            elif op == 'rz': qc.rz(*params, *qubits)
+            elif op == 'ru': qc.u(*params, *qubits)
+            # controled
+            elif op == 'cx': qc.cx(*qubits)
+            elif op == 'cy': qc.cy(*qubits)
+            elif op == 'cz': qc.cz(*qubits)
+            elif op == 'ch': qc.ch(*qubits)
+            elif op == 'crx': qc.crx(*params, *qubits)
+            elif op == 'cry': qc.cry(*params, *qubits)
+            elif op == 'crz': qc.crz(*params, *qubits)
+            elif op == 'cru': qc.cu(*params, *qubits)
+            elif op == 'tfl': qc.ccx(*qubits)
+            else:
+                print(f"Operator not recognized: {op}")
+        except:
+            print(f'!!! Some error occurr with {at}. Verify your circuit description !!!')
+            print("!!! Circuit is incomplete !!!")
+    
+    return qc
+
+
+def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None):
+    n_qubits, c_bits, operators, n_params, seq_params = parse_quantum_file(path, named_params)
+
+    # if don't pass the parameters, use the file parameters
+    if not sequence_params: sequence_params = seq_params 
+
+    return get_circuit_from_desc(n_qubits, c_bits, operators, sequenc_params)
