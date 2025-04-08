@@ -138,7 +138,7 @@ def parse_quantum_file(path: str, named_params = {}):
                     
                     # toffoli gate
                     elif op in ['tfl']:
-                        qubits = [int(parts[1]), int(parts[2]), int(parts[2])]
+                        qubits = [int(parts[1]), int(parts[2]), int(parts[3])]
                     
                     else:
                         print(f"Operator not identified: {line}")
@@ -146,7 +146,7 @@ def parse_quantum_file(path: str, named_params = {}):
 
                     # get the named params and convert to float
                     for i in range(len(params)):
-                        if params[i].startswith('&'):
+                        if str(params[i]).startswith('&'):
                             if params[i] in named_params: 
                                     params[i] = named_params[params[i]]
                             else:  #if the named param dont exist, make it %
@@ -165,15 +165,15 @@ def parse_quantum_file(path: str, named_params = {}):
     except FileNotFoundError:
         print(f"Circuit file not found {path}")
         return (-1, -1, [], -1, [])
-    except:
-        print(f"An error occur while reading the circuit file {path}")
-        return (-1, -1, [], -1, [])
+    # except:
+    #     print(f"An error occur while reading the circuit file {path}")
+    #     return (-1, -1, [], -1, [])
 
 
     return (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
 
 def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : list, sequenc_params : list):
-    
+    print(num_qubits, classical_bits)
     qc = QuantumCircuit(num_qubits, classical_bits)
 
     param_idx = 0
@@ -205,7 +205,7 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
             # single qubits operators
             elif op == 'x': qc.x(*qubits)
             elif op == 'y': qc.y(*qubits)
-            elif op == 'y': qc.z(*qubits)
+            elif op == 'z': qc.z(*qubits)
             elif op == 'h': qc.h(*qubits)
             elif op == 'rx': qc.rx(*params, *qubits)
             elif op == 'ry': qc.ry(*params, *qubits)
@@ -234,6 +234,7 @@ def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None):
     n_qubits, c_bits, operators, n_params, seq_params = parse_quantum_file(path, named_params)
 
     # if don't pass the parameters, use the file parameters
-    if not sequence_params: sequence_params = seq_params 
+    if not sequenc_params: 
+        sequenc_params = seq_params 
 
     return get_circuit_from_desc(n_qubits, c_bits, operators, sequenc_params)

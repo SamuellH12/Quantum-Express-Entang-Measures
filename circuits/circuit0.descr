@@ -35,8 +35,8 @@ ru 3  1.57 3.14 0
 # operadores controlados 
 cx 0 1
 cy 1 2
-cz 2 3
-ch 3 0
+ch 2 3
+cz 3 0
 tfl 0 1 2
 
 # operadores parametrizados controlados
