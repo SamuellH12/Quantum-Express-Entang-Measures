@@ -1,5 +1,6 @@
 from qiskit import QuantumCircuit
-import pennylane as qml
+from qiskit.circuit import Parameter
+# import pennylane as qml
 
 def parse_params_file(path: str):
     '''
@@ -178,6 +179,10 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
     Return a Qiskit QuantumCircuit made based on the description provided.\n
     The descripition must have the format like the returned by:\n
         \tparse_quantum_file()
+    if sequenc_params is None then the returned circuit will be parameterized 
+    using Qiskit parameters, becoming unbound parameters.\n
+    \tYou can access the unbound params with 
+    \t\tparam = circuit.parameters
     '''
     qc = QuantumCircuit(num_qubits, classical_bits)
 
@@ -195,7 +200,10 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
 
         for i in range(len(params)):
             if params[i] == '%':
-                if param_idx < len(sequenc_params):
+                if sequenc_params is None:
+                    params[i] = Parameter('param'+str(param_idx))
+                    param_idx += 1
+                elif param_idx < len(sequenc_params):
                     params[i] = sequenc_params[param_idx] 
                     param_idx += 1
                 else:
@@ -249,6 +257,17 @@ def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None):
 
     return get_circuit_from_desc(n_qubits, c_bits, operators, sequenc_params)
 
+def get_unbound_circuit_from_file(path: str, named_params = {}):
+    '''
+    Read the description file and return a Qiskit QuantumCircuit like the descript on the file.\n
+    The named_params provided will overwrite the correspondents named_params of the file.\n
+    The sequencial parameters will be replaced by Qiskit unbound parameters\n
+        \tYou can access the unbound params with 
+            \t\tparam = circuit.parameters
+    '''
+    n_qubits, c_bits, operators, n_params, seq_params = parse_quantum_file(path, named_params)
+
+    return get_circuit_from_desc(n_qubits, c_bits, operators, None)
 
 
 ### Pennylane version
