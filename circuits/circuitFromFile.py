@@ -82,9 +82,9 @@ def parse_quantum_file(path: str, named_params = {}):
                     if current_layer != None: current_layer.append({'operator': 'BAR'})
                     else: operators.append({'operator': 'BAR'})
                 
-                # Meassure
-                elif line.startswith('MEASSURE'):
-                    opr = {'operator': 'MEASSURE', 'qubits': [], 'params':[]}
+                # Measure
+                elif line.startswith('MEAS'):
+                    opr = {'operator': 'MEASURE', 'qubits': [], 'params':[]}
                     values = line.split()[1:]
                     for i, v in enumerate(values):
                         if v != '-':
@@ -212,7 +212,7 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
                     return qc
 
         try:
-            if op == 'MEASSURE':
+            if op == 'MEASURE':
                 for q, c in zip(qubits, params):
                     qc.measure(q, c)
             # single qubits operators
@@ -283,7 +283,7 @@ def get_unbound_circuit_from_file(path: str, named_params = {}):
 #     @qml.qnode(dev)
 #     def circuit(weight_parameters = []):
 #         param_idx = 0
-#         meassures = []
+#         measures = []
 
 #         for at in operators:
 #             op = at['operator']
@@ -306,9 +306,9 @@ def get_unbound_circuit_from_file(path: str, named_params = {}):
 #                         # !!!! return 
 
 #             try:
-#                 if op == 'MEASSURE':
+#                 if op == 'MEASURE':
 #                     for q, c in zip(qubits, params):
-#                         meassures.append( qml.PauliZ(wires=qubits) )
+#                         measures.append( qml.PauliZ(wires=qubits) )
 #                 # single qubits operators
 #                 elif op == 'x': qc.x(*qubits)
 #                 elif op == 'y': qc.y(*qubits)
