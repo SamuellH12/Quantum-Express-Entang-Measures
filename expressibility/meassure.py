@@ -23,7 +23,7 @@ def get_KL_divergence(circuit : QuantumCircuit, n_shots=10000, nparams=2000, n_b
 
     fidelity=[]    
     for _ in range(nparams):
-        print(_+1, '/', nparams, end='\r')
+        # print(_+1, '/', nparams, end='\r')
         qc = circuit.copy()
         
         for p in qc.parameters:
