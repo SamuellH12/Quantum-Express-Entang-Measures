@@ -1,5 +1,5 @@
 from circuits.circuitFromFile import * 
-from expressibility.meassure import get_KL_divergence
+from expressibility.ExpressMeasure import get_KL_divergence
 from qiskit.visualization import plot_histogram
 from qiskit import QuantumCircuit
 import matplotlib.pyplot as plt
