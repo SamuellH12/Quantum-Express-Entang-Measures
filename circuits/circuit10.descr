@@ -1,0 +1,22 @@
+# circuito 10
+Q 4
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+LAYER &L
+
+cz 3 2
+cz 2 1
+cz 1 0
+cz 3 0
+# esse último tá implementado como 3 0, mas não deveria ser 0 3?
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+ENDLAYER

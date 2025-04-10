@@ -1,0 +1,46 @@
+# circuito 5
+Q 4
+
+LAYER &L
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+
+rz 0 %
+rz 1 %
+rz 2 %
+rz 3 %
+
+
+# Controled RZ gates #
+crz 3 0 %
+crz 3 1 %
+crz 3 2 %
+
+crz 2 0 %
+crz 2 1 %
+crz 2 3 %
+
+crz 1 0 %
+crz 1 2 %
+crz 1 3 %
+
+crz 0 1 %
+crz 0 2 %
+crz 0 3 %
+
+# ################# #
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+
+rz 0 %
+rz 1 %
+rz 2 %
+rz 3 %
+
+ENDLAYER

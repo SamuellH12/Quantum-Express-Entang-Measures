@@ -1,0 +1,26 @@
+# circuito 14
+Q 4
+
+LAYER &L
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+crx 3 0 %
+crx 2 3 %
+crx 1 2 %
+crx 0 1 %
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+crx 3 2 %
+crx 0 3 %
+crx 1 0 %
+crx 2 1 %
+
+ENDLAYER

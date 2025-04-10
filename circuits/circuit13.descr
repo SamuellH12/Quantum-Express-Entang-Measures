@@ -1,0 +1,26 @@
+# circuito 13
+Q 4
+
+LAYER &L
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+crz 3 0 %
+crz 2 3 %
+crz 1 2 %
+crz 0 1 %
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+crz 3 2 %
+crz 0 3 %
+crz 1 0 %
+crz 2 1 %
+
+ENDLAYER

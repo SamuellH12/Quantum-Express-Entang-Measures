@@ -1,0 +1,26 @@
+# circuito 12
+Q 4
+
+LAYER &L
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+rz 0 %
+rz 1 %
+rz 2 %
+rz 3 %
+
+cz 1 0
+cz 3 2
+
+ry 1 %
+ry 2 %
+rz 1 %
+rz 2 %
+
+cz 2 1
+
+ENDLAYER

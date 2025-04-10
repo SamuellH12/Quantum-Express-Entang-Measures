@@ -1,0 +1,26 @@
+# circuito 15
+Q 4
+
+LAYER &L
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+cx 3 0
+cx 2 3
+cx 1 2
+cx 0 1
+
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
+
+cx 3 2
+cx 0 3
+cx 1 0
+cx 2 1
+
+ENDLAYER

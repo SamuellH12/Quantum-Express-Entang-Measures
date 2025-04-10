@@ -1,0 +1,35 @@
+# circuito 8
+Q 4
+
+LAYER &L
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+
+rz 0 %
+rz 1 %
+rz 2 %
+rz 3 %
+
+
+crx 1 0 %
+crx 3 2 %
+
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+
+rz 0 %
+rz 1 %
+rz 2 %
+rz 3 %
+
+
+crx 2 1 %
+
+
+ENDLAYER
