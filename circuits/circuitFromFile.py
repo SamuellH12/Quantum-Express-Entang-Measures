@@ -113,7 +113,7 @@ def parse_quantum_file(path: str, named_params = {}):
                 
                 elif line.startswith('ENDLAYER'):
                     for _ in range(layer_repeat): 
-                        operators.extend(current_layer)
+                        operators.extend(current_layer.copy())
                     # operators.append({'operator':'LAYER', 'operatorList':current_layer, 'repeat':layer_repeat})
                     current_layer = None
                 
@@ -195,8 +195,8 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
             qc.barrier()
             continue
         
-        qubits = at['qubits']
-        params = at['params']
+        qubits = at['qubits'].copy()
+        params = at['params'].copy()
 
         for i in range(len(params)):
             if params[i] == '%':

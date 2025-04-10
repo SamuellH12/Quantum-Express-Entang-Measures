@@ -11,10 +11,12 @@ from qiskit.visualization import plot_histogram
 # for x in op: print(x)
 # seq = [2 for _ in range(np)]
 
-qc = get_unbound_circuit_from_file('circuits/circuitx.descr', {'&L':1})
+qc = get_unbound_circuit_from_file('circuits/circuit1.descr', {'&L':1})
+print(qc)
+qc = get_circuit_from_file('circuits/circuit1.descr', {'&L':1}, [2, 2, 2, 3.14, 2, 2, 2, 2, 2, 2])
 print(qc)
 
-kl_pq = get_KL_divergence(qc, n_shots=10, nparams=20)
+# kl_pq = get_KL_divergence(qc, n_shots=10, nparams=20)
 
 # plot_histogram(counts, title='Resultados')    
 # plt.savefig('teste.png')

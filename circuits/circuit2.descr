@@ -12,7 +12,7 @@ rz 0 %
 rz 1 %
 rz 2 %
 rz 3 %
-
+BAR
 cx 3 2
 cx 2 1
 cx 1 0
