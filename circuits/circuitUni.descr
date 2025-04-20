@@ -1,0 +1,8 @@
+Q 2
+
+h 0
+h 1
+
+CUSTOM gate 0 1
+
+MEASURE 0

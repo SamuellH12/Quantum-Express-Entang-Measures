@@ -1,5 +1,5 @@
 from qiskit import QuantumCircuit, ClassicalRegister
-from qiskit.circuit import Parameter, Measure
+from qiskit.circuit import Parameter, Measure, Gate
 from qiskit import transpile
 from qiskit_aer import AerSimulator
 import numpy as np
@@ -7,7 +7,10 @@ from random import random
 from math import pi as PI_VALUE
 from scipy.special import rel_entr
 from qiskit.providers.basic_provider import BasicSimulator
+from qiskit.circuit.library import UnitaryGate
+from qiskit.quantum_info import Statevector
 import matplotlib.pyplot as plt
+
 
 def get_circuit_with_param_conjugate(circuit: QuantumCircuit) -> QuantumCircuit:
     '''
@@ -68,21 +71,27 @@ def get_KL_divergence(circuit : QuantumCircuit, n_shots = 10000, nparams=2000, r
     b_list = [ i/n_bins for i in range(n_bins+1) ] # b_cent = [b_list[i] + (1/n_bins) for i in range(n_bins)]
     harr_hist = [ P_harr(b_list[i], b_list[i+1], 2**n_qubits) for i in range(n_bins) ]
     
-    conjugado = get_circuit_with_param_conjugate(circuit)
+    # conjugado = get_circuit_with_param_conjugate(circuit)
+    conjugado = circuit.copy()
     
     if not reuse_circuit_measures:
         conjugado.remove_final_measurements()
         conjugado.measure_all()
 
     n_classic = conjugado.num_clbits
-    zeros = ''; 
-    for _ in range(n_classic): zeros += '0'
+    zeros = '0' * n_classic 
 
     fidelity=[]    
     for _ in range(nparams):
         qc = conjugado.copy()
-        qc.assign_parameters({p : 2.0*PI_VALUE*random() for p in qc.parameters}, inplace=True)
+        param_binding = {p : 2.0*PI_VALUE*random() for p in qc.parameters}
+        qc.assign_parameters(param_binding, inplace=True)
         
+        for instruction, qargs, cargs in qc.data:
+            if hasattr(instruction, 'assign_parameters'):
+                instruction.assign_parameters(param_binding, inplace=True)
+        
+        qc = qc.decompose()
         counts = backend.run(qc, shots=n_shots).result().get_counts()
 
         ratio = counts.get(zeros, 0) / n_shots
@@ -92,4 +101,15 @@ def get_KL_divergence(circuit : QuantumCircuit, n_shots = 10000, nparams=2000, r
     P_hist=np.histogram(fidelity, bins=b_list, weights=weights, range=[0, 1])[0]
     kl_pq = rel_entr(P_hist, harr_hist)
     
+
+    plt.hist(fidelity, bins=b_list, weights=weights, range=[0, 1], label='IQC')
+    bins_x=[]    
+    for i in range(75): bins_x.append(b_list[1]+b_list[i])
+    plt.plot(bins_x, harr_hist, label='Harr')
+    plt.legend(loc='upper right')
+    plt.ylabel('Probability')
+    plt.xlabel('Fidelity')
+    plt.savefig('fig.png')
+
+
     return sum(kl_pq)

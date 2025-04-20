@@ -76,6 +76,13 @@ rx 3 &N
 BAR
 ENDLAYER
 
+# Custom gates
+# coloqo CUSTOM seguido do nome do operador e seus qubits
+# CUIDADO!!! CUSTOM não suporta parâmetrização por arquivo !!!
+# (mas claro que o gate passado pode já estar parametrizado)
+# deverá ser passado num dicionário ao ler o arquivo
+CUSTOM gate 0 1
+
 # medidas
 # measure qubit0 [qubit1] [qubit2] [...] [qubitN]
 # os valores serão mapeados aos bits clássicos automaticamente

@@ -1,5 +1,6 @@
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
+from qiskit.circuit.library import UnitaryGate
 # import pennylane as qml
 
 def parse_params_file(path: str):
@@ -57,7 +58,8 @@ def parse_quantum_file(path: str, named_params = {}):
     sequenc_params = []
     num_of_params = 0
     
-    try:
+    # try:
+    if True:
         with open(path, 'r') as f:
             for line in f:
                 line = line.strip()
@@ -142,6 +144,15 @@ def parse_quantum_file(path: str, named_params = {}):
                     elif op in ['tfl']:
                         qubits = [int(parts[1]), int(parts[2]), int(parts[3])]
                     
+                    elif op == 'CUSTOM':
+                        if len(parts) < 2:
+                            print(f"!!! Custom gate requires a name. {line} !!!")
+                            print("Ignoring this gate")
+                            continue
+                        gate_name = parts[1]
+                        op = f"CUSTOM {gate_name}"
+                        qubits = [int(x) for x in parts[2:]]
+
                     else:
                         print(f"Operator not identified: {line}")
                         continue
@@ -164,24 +175,30 @@ def parse_quantum_file(path: str, named_params = {}):
 
                     num_of_params += params.count('%') * (layer_repeat if current_layer != None else 1)
             
-    except FileNotFoundError:
-        print(f"Circuit file not found {path}")
-        return (-1, -1, [], -1, [])
-    except:
-        print(f"An error occur while reading the circuit file {path}")
-        return (-1, -1, [], -1, [])
+    # except FileNotFoundError:
+    #     print(f"Circuit file not found {path}")
+    #     return (-1, -1, [], -1, [])
+    # except:
+    #     print(f"An error occur while reading the circuit file {path}")
+    #     return (-1, -1, [], -1, [])
 
 
     return (num_qubits, classical_bits, operators, num_of_params, sequenc_params)
 
-def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : list, sequenc_params : list):
+def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : list, sequenc_params : list, custom_gates = {}):
     '''
     Return a Qiskit QuantumCircuit made based on the description provided.\n
     The descripition must have the format like the returned by:\n
         \tparse_quantum_file()
-    if sequenc_params is None then the returned circuit will be parameterized 
-    using Qiskit parameters, becoming unbound parameters.\n
-    \tYou can access the unbound params with 
+    
+    Args:
+        num_qubits: Number of qubits in the circuit
+        classical_bits: Number of classical bits
+        operators: List of operators (dictionaries from parse_quantum_file())
+        sequence_params: List of parameter values (or None for unbound parameters)
+        custom_gates: Dictionary of custom gates {gate_name: (Gate, params_count)}
+
+    \n\tYou can access the unbound params with 
     \t\tparam = circuit.parameters
     '''
     qc = QuantumCircuit(num_qubits, classical_bits)
@@ -211,10 +228,19 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
                     print("!!! Circuit is incomplete !!!")
                     return qc
 
-        try:
+        # try:
+        if True:
             if op == 'MEASURE':
                 for q, c in zip(qubits, params):
                     qc.measure(q, c)
+            
+            elif op.startswith('CUSTOM'):
+                gate_name = op.split()[1]
+                if gate_name not in custom_gates:
+                    print(f"!!! Custom gate '{gate_name}' not provided !!! ignoring it !!!")
+                    continue    
+                qc.append(custom_gates[gate_name].copy(), qubits)
+
             # single qubits operators
             elif op == 'x': qc.x(*qubits)
             elif op == 'y': qc.y(*qubits)
@@ -236,14 +262,14 @@ def get_circuit_from_desc(num_qubits : int, classical_bits : int, operators : li
             elif op == 'tfl': qc.ccx(*qubits)
             else:
                 print(f"Operator not recognized: {op}")
-        except:
-            print(f'!!! Some error occurr with {at}. Verify your circuit description !!!')
-            print("!!! Circuit is incomplete !!!")
+        # except:
+        #     print(f'!!! Some error occurr with {at}. Verify your circuit description !!!')
+        #     print("!!! Circuit is incomplete !!!")
     
     return qc
 
 
-def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None):
+def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None, custom_gates={}):
     '''
     Read the description file and return a Qiskit QuantumCircuit like the descript on the file.\n
     The named_params provided will overwrite the correspondents named_params of the file.\n
@@ -255,9 +281,9 @@ def get_circuit_from_file(path: str, named_params = {}, sequenc_params = None):
     if not sequenc_params: 
         sequenc_params = seq_params 
 
-    return get_circuit_from_desc(n_qubits, c_bits, operators, sequenc_params)
+    return get_circuit_from_desc(n_qubits, c_bits, operators, sequenc_params, custom_gates)
 
-def get_unbound_circuit_from_file(path: str, named_params = {}):
+def get_unbound_circuit_from_file(path: str, named_params = {}, custom_gates={}):
     '''
     Read the description file and return a Qiskit QuantumCircuit like the descript on the file.\n
     The named_params provided will overwrite the correspondents named_params of the file.\n
@@ -267,7 +293,7 @@ def get_unbound_circuit_from_file(path: str, named_params = {}):
     '''
     n_qubits, c_bits, operators, n_params, seq_params = parse_quantum_file(path, named_params)
 
-    return get_circuit_from_desc(n_qubits, c_bits, operators, None)
+    return get_circuit_from_desc(n_qubits, c_bits, operators, None, custom_gates)
 
 
 ### Pennylane version
