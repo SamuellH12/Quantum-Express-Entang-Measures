@@ -2,7 +2,7 @@
 # Primeiramente defina o cabeçalho com a quantidade de qubits e os parametros
 
 Q 4
-PARAM circuit0.param
+PARAM Sample.param
 
 # PARAM path/To/File/With/Params.txt
 # Se não existir um arquivo de parametros 

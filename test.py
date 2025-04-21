@@ -2,7 +2,7 @@ from circuits.circuitFromFile import parse_quantum_file
 from circuits.circuitFromFile import get_circuit_from_file
 from circuits.circuitFromFile import get_unbound_circuit_from_file
 from circuits.circuitFromFile import get_circuit_from_desc
-from circuits.unitarios import get_model_unitary
+from circuits.CustomUnitary.unitary import get_model_unitary
 from expressibility.ExpressMeasure import get_KL_divergence
 from qiskit import QuantumCircuit
 import matplotlib.pyplot as plt
@@ -22,12 +22,12 @@ print(unitary_matrix)
 
 
 # # a o circuito com os parâmetros fornecidos qc,_,_ = circuit_model(data=tx[0],w=tw,counter=counter,qubits=qubits,N_qubits=N_qubits,N_features=NF,model=MODEL,folder=folder,N_qubits_tgt=None,N_layers=None)
-# NF=2
-# gate =  get_model_unitary('IQC', N_features=NF)
+NF=2
+gate =  get_model_unitary('IQC', N_features=NF)
 
-# qc = get_unbound_circuit_from_file('circuits/circuitUni.descr', custom_gates={'gate' : gate})
-# print(qc)
+qc = get_unbound_circuit_from_file('circuits/CustomUnitary/circuitUni.descr', custom_gates={'gate' : gate})
+print(qc)
 
-# qasm_simulator = Aer.get_backend("qasm_simulator")
-# kl_pq = get_KL_divergence(qc, n_shots=10000, nparams=5000, backend=qasm_simulator, reuse_circuit_measures=True)
+qasm_simulator = Aer.get_backend("qasm_simulator")
+kl_pq = get_KL_divergence(qc, n_shots=10000, nparams=5000, backend=qasm_simulator, reuse_circuit_measures=True)
 

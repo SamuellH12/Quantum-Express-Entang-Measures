@@ -3,7 +3,7 @@ from qiskit.circuit import Parameter
 from qiskit.circuit.library import UnitaryGate
 # import pennylane as qml
 
-def parse_params_file(path: str):
+def parse_params_file(path: str) -> tuple[dict, list]:
     '''
     Read the params in the path file and return a
     dict with named params, list of sequencial params\n
@@ -294,70 +294,3 @@ def get_unbound_circuit_from_file(path: str, named_params = {}, custom_gates={})
     n_qubits, c_bits, operators, n_params, seq_params = parse_quantum_file(path, named_params)
 
     return get_circuit_from_desc(n_qubits, c_bits, operators, None, custom_gates)
-
-
-### Pennylane version
-# def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev = None):
-#     '''
-#     Return a Pennylane circuit method circuit(parameters), the device dev and the qnode?.\n
-    
-#     '''
-#     if not dev: 
-#         dev = qml.device("default.qubit", wires=num_qubits, shots=None)
-
-    
-#     @qml.qnode(dev)
-#     def circuit(weight_parameters = []):
-#         param_idx = 0
-#         measures = []
-
-#         for at in operators:
-#             op = at['operator']
-
-#             if op == 'BAR':
-#                 qml.Barrier(wires=range(num_qubits))
-#                 continue
-            
-#             qubits = at['qubits']
-#             params = at['params']
-
-#             for i in range(len(params)):
-#                 if params[i] == '%':
-#                     if param_idx < len(weight_parameters):
-#                         params[i] = weight_parameters[param_idx] 
-#                         param_idx += 1
-#                     else:
-#                         print("!!! The amount of given parameters is less than the number of circuit parameters !!!")
-#                         print("!!! Circuit is incomplete !!!")
-#                         # !!!! return 
-
-#             try:
-#                 if op == 'MEASURE':
-#                     for q, c in zip(qubits, params):
-#                         measures.append( qml.PauliZ(wires=qubits) )
-#                 # single qubits operators
-#                 elif op == 'x': qc.x(*qubits)
-#                 elif op == 'y': qc.y(*qubits)
-#                 elif op == 'z': qc.z(*qubits)
-#                 elif op == 'h': qc.h(*qubits)
-#                 elif op == 'rx': qc.rx(*params, *qubits)
-#                 elif op == 'ry': qc.ry(*params, *qubits)
-#                 elif op == 'rz': qc.rz(*params, *qubits)
-#                 elif op == 'ru': qc.u(*params, *qubits)
-#                 # controled
-#                 elif op == 'cx': qc.cx(*qubits)
-#                 elif op == 'cy': qc.cy(*qubits)
-#                 elif op == 'cz': qc.cz(*qubits)
-#                 elif op == 'ch': qc.ch(*qubits)
-#                 elif op == 'crx': qc.crx(*params, *qubits)
-#                 elif op == 'cry': qc.cry(*params, *qubits)
-#                 elif op == 'crz': qc.crz(*params, *qubits)
-#                 elif op == 'cru': qc.cu(*params, *qubits)
-#                 elif op == 'tfl': qc.ccx(*qubits)
-#                 else:
-#                     print(f"Operator not recognized: {op}")
-#             except:
-#                 print(f'!!! Some error occurr with {at}. Verify your circuit description !!!')
-#                 print("!!! Circuit is incomplete !!!")
-    
-#     return qc

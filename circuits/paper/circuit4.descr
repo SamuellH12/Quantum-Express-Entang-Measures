@@ -12,9 +12,10 @@ rz 0 %
 rz 1 %
 rz 2 %
 rz 3 %
-BAR
+
 crx 3 2 %
 crx 2 1 %
 crx 1 0 %
+BAR
 
 ENDLAYER

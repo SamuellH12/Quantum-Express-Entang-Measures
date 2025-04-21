@@ -31,6 +31,11 @@ class ModelUnitaryGate(Gate):
             self.definition.data[0] = (new_gate, self.definition.qubits, [])
             return self
         return new_gate
+    
+    def get_bound_matrix(self, parameters):
+        param_values = [parameters[p] if isinstance(p, Parameter) else p for p in self.params]
+        new_matrix = self._build_matrix(param_values, self.n_data, self.num_qubits)
+        return new_matrix
 
 rng=np.random.default_rng(1)
 rng2=np.random.default_rng(42)
