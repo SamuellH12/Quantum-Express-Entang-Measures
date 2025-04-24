@@ -117,7 +117,7 @@ def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev : qm
                 elif op == 'crx': qml.CRX(*params, qubits)
                 elif op == 'cry': qml.CRY(*params, qubits)
                 elif op == 'crz': qml.CRZ(*params, qubits)
-                elif op == 'cru': qml.CRot(*params,qubits)
+                elif op == 'cru': qml.CRot(*params[:3],qubits) # qiskit accepts a 4th param, but pennylane don't
                 elif op == 'tfl': qml.Toffoli(qubits)
                 else:
                     raise ValueError(f"Operator {op} not recognized or not suported")

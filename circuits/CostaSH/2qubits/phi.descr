@@ -1,9 +1,27 @@
 # φ
 Q 2
 
+h 0
+h 1
+
+BAR
+
 LAYER &L
 
+rz 0 %
+rz 1 %
 
+cx 0 1
+
+rz 0 %
+rz 1 %
+
+cx 1 0
+
+BAR
 ENDLAYER
+
+h 0
+h 1
 
 MEAS 0 1

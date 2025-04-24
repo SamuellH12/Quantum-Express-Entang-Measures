@@ -3,7 +3,17 @@ Q 2
 
 LAYER &L
 
+rx 0 %
+rx 1 %
 
+cx 0 1
+
+rx 0 %
+rx 1 %
+
+cx 1 0
+
+BAR
 ENDLAYER
 
 MEAS 0 1
