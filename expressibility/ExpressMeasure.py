@@ -36,7 +36,7 @@ def get_circuit_with_param_conjugate(circuit: QuantumCircuit) -> QuantumCircuit:
     for gate, qargs, cargs in rev_ops:
         new_gate = gate
         if gate.params:
-            new_params = [Parameter(f'conj_{param.name}') for param in gate.params]
+            new_params = [Parameter(f'conj_{param.name}') if hasattr(param, 'name') else param for param in gate.params]
             new_gate = gate.__class__(*new_params)
         
         qc.append(new_gate, qargs, cargs)
