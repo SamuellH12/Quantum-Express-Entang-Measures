@@ -2,7 +2,32 @@ Q 3
 
 LAYER &L
 
+crx 0 1 %
+crx 0 2 %
+crx 1 0 %
+crx 1 2 %
+crx 2 0 %
+crx 2 1 %
 
+cry 2 1 %
+cry 2 0 %
+cry 1 2 %
+cry 1 0 %
+cry 0 2 %
+cry 0 1 %
+
+crz 0 2 %
+crz 0 1 %
+crz 2 1 %
+crz 1 2 %
+crz 2 0 %
+crz 1 0 %
+
+BAR
 ENDLAYER
+
+h 0
+h 1 
+h 2
 
 MEAS 0 1 2

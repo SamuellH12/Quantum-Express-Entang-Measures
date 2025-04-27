@@ -2,7 +2,25 @@ Q 3
 
 LAYER &L
 
+ry 0 %
+ry 1 %
+ry 2 %
 
+cru 0 2 % % %
+cru 1 2 % % %
+
+h 0
+h 1
+h 2
+
+cz 2 0
+cz 2 1
+
+rx 0 % 
+rx 1 % 
+rx 2 % 
+
+BAR
 ENDLAYER
 
 MEAS 0 1 2
