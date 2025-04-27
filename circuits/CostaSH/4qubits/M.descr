@@ -2,7 +2,29 @@ Q 4
 
 LAYER &L
 
+ry 0 %
+ry 1 %
+ry 2 %
+ry 3 %
 
+cru 0 3 % % %
+cru 1 3 % % %
+cru 2 3 % % %
+
+cx 2 1
+cx 0 2
+cx 1 0
+
+rx 0 %
+rx 1 %
+rx 2 %
+rx 3 %
+
+cry 0 1 %
+cry 1 2 %
+cry 2 3 %
+
+BAR
 ENDLAYER
 
-MEAS 0 1 2 3
+MEAS 3
