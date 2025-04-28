@@ -5,7 +5,8 @@ CIRCUIT_DEFAULT_ARGS = {'weights': [],
                         'input': None, 
                         'encoding': 'phase', 
                         'meas': 'expval', 
-                        'measwire': None}
+                        'measwire': None,
+                        'run_quiet' : False}
 
 def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev : qml.device = None) -> tuple[callable, qml.device, int]:
     '''
@@ -36,7 +37,7 @@ def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev : qm
 
     ### Circuit definition ###
     @qml.qnode(dev)
-    def circuit(weights : list = [], input : list = None, encoding : str = 'phase', meas : str ='expval', measwire : list = None):
+    def circuit(weights : list = [], input : list = None, encoding : str = 'phase', meas : str ='expval', measwire : list = None, run_quiet=False):
         '''
         Executable quantum circuit with embedded data processing.
         
@@ -63,14 +64,14 @@ def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev : qm
         # input loading
         encoding = encoding.lower()
         if encoding == 'phasex' or encoding == 'phase':
-            if len(input) != num_qubits: 
+            if len(input) != num_qubits and run_quiet == False: 
                 print(f"!!! Warning !!! {len(input)} input data and {num_qubits} in the circuit" )
             
             for i, theta in enumerate(input):
                 qml.RX(theta, i)
 
         elif encoding == 'phasey':
-            if len(input) != num_qubits: 
+            if len(input) != num_qubits and run_quiet == False: 
                 print(f"!!! Warning !!! {len(input)} input data and {num_qubits} in the circuit" )
             
             for i, theta in enumerate(input):

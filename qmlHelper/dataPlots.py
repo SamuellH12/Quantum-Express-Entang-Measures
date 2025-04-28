@@ -6,7 +6,7 @@ from .metrics import threshold
 PLT_MARKERS = ['o', 's', '^', 'v', '<', '>', 'p', '*', 'h', 'H', 'D', 'd']
 
 def print2D_decision_region(circuit, weights, bias, data, labels, circuit_params, num_classes, supervised = False,
-                            grid_colormap = 'inferno', data_colormap = 'viridis', 
+                            grid_colormap = 'turbo', data_colormap = 'viridis', 
                             x_max=2*np.pi, y_max=2*np.pi, x_min=0.0, y_min=0.0, figsize=(6, 4), resolution=20):
 
     # make data for decision regions and preprocess grid pointss
