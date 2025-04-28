@@ -1,6 +1,12 @@
 from .circuitFromFile import parse_quantum_file
 import pennylane as qml
 
+CIRCUIT_DEFAULT_ARGS = {'weights': [], 
+                        'input': None, 
+                        'encoding': 'phase', 
+                        'meas': 'expval', 
+                        'measwire': None}
+
 def get_pennylane_circuit_from_desc(num_qubits : int, operators : list, dev : qml.device = None) -> tuple[callable, qml.device, int]:
     '''
     Generates a parameterized PennyLane quantum circuit from a gate description list.
