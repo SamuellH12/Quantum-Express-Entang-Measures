@@ -1,7 +1,8 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from .utils import classifier
-from .metrics import threshold
+from . import utils as qmlHelperUtils
+from . import metrics as qmlHelperMetrics 
+
 
 PLT_MARKERS = ['o', 's', '^', 'v', '<', '>', 'p', '*', 'h', 'H', 'D', 'd']
 
@@ -13,7 +14,7 @@ def print2D_decision_region(circuit, weights, bias, data, labels, circuit_params
     xx, yy = np.meshgrid(np.linspace(x_min, x_max, resolution), np.linspace(y_min, y_max, resolution))
     X_grid = np.c_[xx.ravel(), yy.ravel()]
     features_grid = np.array( [list(x) + list(x)[:max(0, len(data[0])-len(x))] for x in X_grid] )  # angles for state preparation are new features // extend the len of features if less than
-    predictions_grid = np.array([classifier(circuit, Xi, weights, bias, circuit_params) for Xi in features_grid ])
+    predictions_grid = np.array([qmlHelperUtils.classifier(circuit, Xi, weights, bias, circuit_params) for Xi in features_grid ])
     Z = predictions_grid.reshape(xx.shape)
 
     # Plot
@@ -24,7 +25,7 @@ def print2D_decision_region(circuit, weights, bias, data, labels, circuit_params
     # cnt = plt.contourf( xx, yy, Z, levels=np.arange(-1, 1.1, 0.1), cmap=cm, alpha=0.8, extend="both" )
     # plt.contour(        xx, yy, Z, levels=[-1.0, -threshold_div, 0.0, threshold_div, 1.0], colors=("black",), linestyles=("--",), linewidths=(0.8,))
     
-    label_predict = np.array([threshold(classifier(circuit, Xi, weights, bias, circuit_params), num_classes) for Xi in data ])
+    label_predict = np.array([qmlHelperMetrics.threshold(qmlHelperUtils.classifier(circuit, Xi, weights, bias, circuit_params), num_classes) for Xi in data ])
     data_cmap = plt.get_cmap(data_colormap, max(num_classes, len(set(labels)), len(set(label_predict))) * 2)
 
     # Plot points
@@ -78,8 +79,8 @@ def print2D_decision_region_multiclass(circuit, weights, bias, data, labels, cir
     X_grid = np.c_[xx.ravel(), yy.ravel()]
     
     # Get predictions for each grid point
-    raw_predictions = np.array([classifier(circuit, Xi, weights, bias, circuit_params) for Xi in X_grid])
-    class_predictions = np.array([threshold(pred, num_classes) for pred in raw_predictions])
+    raw_predictions = np.array([qmlHelperUtils.classifier(circuit, Xi, weights, bias, circuit_params) for Xi in X_grid])
+    class_predictions = np.array([qmlHelperMetrics.threshold(pred, num_classes) for pred in raw_predictions])
     
     # For smooth visualization, we'll create continuous values for the colormap
     if num_classes == 2:
@@ -107,8 +108,8 @@ def print2D_decision_region_multiclass(circuit, weights, bias, data, labels, cir
     plt.contour(xx, yy, Z, levels=boundary_levels, colors='k', linestyles='--', linewidths=1)
     
     # Get predictions for training data
-    train_raw = np.array([classifier(circuit, Xi, weights, bias, circuit_params) for Xi in data])
-    train_pred = np.array([threshold(pred, num_classes) for pred in train_raw])
+    train_raw = np.array([qmlHelperUtils.classifier(circuit, Xi, weights, bias, circuit_params) for Xi in data])
+    train_pred = np.array([qmlHelperMetrics.threshold(pred, num_classes) for pred in train_raw])
     
     # Markers and colors for classes
     markers = PLT_MARKERS[:num_classes]

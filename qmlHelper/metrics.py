@@ -1,4 +1,4 @@
-import numpy as np
+from pennylane import numpy as np
 
 def get_hypercube(N: int):
     '''
@@ -18,16 +18,23 @@ def threshold(output, num_classes=2):
     # only one qubit measured
     if len(output) == 1:
         boundaries = np.linspace(-1, 1, num_classes+1)
-        return max(int(np.digitize(output, boundaries, right=True) - 1), 0)
+
+        for i in range(num_classes):
+            if boundaries[i] <= output < boundaries[i+1]:
+               return i
+        return num_classes-1
 
     # multiple qubits
     if len(output) == num_classes:
-        return int(np.argmax(output))
+        max_val = max(output)
+        for i, val in enumerate(output):
+            if val == max_val:
+               return i
+        return num_classes-1
     
     raise ValueError(f"Cannot map {output.size} measurement(s) to {num_classes} classes")
 
 
-from pennylane import numpy as np
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.metrics import rand_score, davies_bouldin_score, calinski_harabasz_score
 
@@ -40,12 +47,23 @@ def square_loss_silhouette(features, predictions, labels, num_classes):
 
 def square_loss_davies_bouldin_score(features, predictions, labels, num_classes):
   if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
-  predictions = np.array(list(map(threshold, predictions)))
+  predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
   if len(np.unique(predictions)) == 1: return np.float64(1)
   return np.float64(davies_bouldin_score( features, predictions))
 
 def square_loss_calinski_harabasz_score(features, predictions, labels, num_classes):
   if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
-  predictions = np.array(list(map(threshold, predictions)))
+  predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
   if len(np.unique(predictions)) == 1: return np.float64(10)
   return np.float64( 1.0 / (1e-5 + calinski_harabasz_score(features, predictions))) # original [0, INF) where INF is better
+
+
+from sklearn.metrics import adjusted_rand_score
+from . import utils as qmlHelperUtils
+
+def unsupervised_accuracy(circuit, weights, bias, data, label, num_classes, circuit_args = {'encoding': 'phase', 'meas' : 'expval', 'measwire': [0]}):
+   
+   predictions = np.array([qmlHelperUtils.classifier(circuit, Xi, weights, bias, circuit_args) for Xi in data ] )
+   predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
+   
+   return adjusted_rand_score(label, predictions)

@@ -2,7 +2,7 @@ from pennylane import numpy as np
 import pennylane as qml
 from pennylane.optimize import NesterovMomentumOptimizer, RotosolveOptimizer, GradientDescentOptimizer, SPSAOptimizer
 from . import dataPlots as localDataPlots
-from .metrics import square_loss_silhouette
+from . import metrics as qmlHelperMetrics 
 
 
 def classifier(circuit : callable, X_data : list, weights : list = [], bias : list = 0, circuit_args = {'encoding': 'phase', 'meas' : 'expval', 'measwire': [0]}):
@@ -17,7 +17,7 @@ def cost(circuit, weights, bias, metric, X_batch, y_batch, num_classes, circuit_
 def train_ansatz(circuit : callable, n_params : int, 
                  circuit_args : dict, data, labels, 
                  batch_size = 10, Steps = 100, 
-                 cost_metric = square_loss_silhouette, 
+                 cost_metric = qmlHelperMetrics.square_loss_silhouette, 
                  opt = SPSAOptimizer(10), 
                  seed=12, threshold_n_classes = 2, use_bias = True,
                  print_cost_interval = -1, print_decision_region = False
@@ -33,7 +33,8 @@ def train_ansatz(circuit : callable, n_params : int,
     y_batch = labels[idxs]
 
     arguments = [circuit, weights, bias if use_bias else np.array(0) , cost_metric, x_batch, y_batch, threshold_n_classes, circuit_args]
-    weights, bias = opt.step(cost, *arguments)[1:3] #be carefull here. W and B are really [1] and [2]???
+    weights, _bias_ = opt.step(cost, *arguments)[1:3] #be carefull here. W and B are really [1] and [2]???
+    if use_bias: bias = _bias_
 
     if print_cost_interval > 0 and (i % print_cost_interval == 0 or i == Steps-1):
         arguments = [circuit, weights, bias, cost_metric, data, labels, threshold_n_classes, circuit_args]
