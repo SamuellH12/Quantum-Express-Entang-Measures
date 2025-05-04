@@ -109,8 +109,8 @@ from qmlHelper.metrics import unsupervised_accuracy
 from sklearn.model_selection import train_test_split
 
 SEED = 157
-BATCH_SIZE = 1
-STEPS = 0
+BATCH_SIZE = 20
+STEPS = 80
 CIRCUIT_ARGS = {'encoding': 'phase',
                 'meas': 'expval',
                 'measwire': [0],
@@ -239,15 +239,9 @@ MAX_WORKERS = max(os.cpu_count() - 1, 1)
 
 def run_task_parallel(tasks, filename, tqdmname):
 
-        cnt = 0
         results = []
         for task in tqdm(tasks, desc=tqdmname):
             results.append(run_one_task_args(task))
-
-            if cnt == 15:
-                save_dataframe(pd.DataFrame(results), filename)
-                results = []
-                cnt = 0
 
         final_df = pd.DataFrame(results)
         save_dataframe(final_df, filename)
@@ -270,7 +264,7 @@ from math import ceil
 
 def main():
     if len(sys.argv) == 1:  # Main process
-        SIZE = 40; len(TASKS)
+        SIZE = len(TASKS)
         DIV = int(input('How many divisions do you want? → '))
         
         # Calculate chunk sizes with load balancing
@@ -307,7 +301,7 @@ def main():
             FILENAME = f'reports_data/Ansatz_reduced_training_reports(CostaSH)_{L}_{R}.csv'
             
             print(f"Processing tasks {L}-{R}")
-            run_task_parallel(TASKS[L:R], FILENAME, f'tasks [{start}-{end})')
+            run_task_parallel(TASKS[L:R], FILENAME, f'tasks [{L}-{R})')
 
         except Exception as e:
             print(f"Child process failed: {str(e)}")
