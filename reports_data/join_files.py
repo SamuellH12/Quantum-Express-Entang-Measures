@@ -25,16 +25,16 @@ def save_dataframe(df_novo, arquivo):
 
 
 
-FILESPREFIX = 'Ansatz_reduced_training_reports(CostaSH)'
-FILEFINAL = 'Ansatz_reduced_training_reports(CostaSH).csv'
+FILESPREFIX = './temp/Ansatz_training_reports_'
+FILEFINAL = 'Ansatz_training_reports(CostaSH).csv'
 
 pathlist = get_csv_path_list('.')
-pathlist = [(path.split('_')[-2], path) for path in pathlist]
-pathlist = [(int(order) if '0' <= order[0] <= '9' else -1, path) for order, path in pathlist]
+# pathlist = [(path.split('_')[-2], path) for path in pathlist]
+# pathlist = [(int(order) if '0' <= order[0] <= '9' else -1, path) for order, path in pathlist]
+# pathlist = sorted(pathlist)
 
-pathlist = sorted(pathlist)
 
-for _, path in pathlist:
+for path in pathlist:
     if FILESPREFIX in path:
         print(path)
         df = pd.read_csv(path)
