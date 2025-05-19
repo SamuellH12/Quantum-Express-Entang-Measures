@@ -197,10 +197,9 @@ def get_tasks(CIRCUITS, DATASET_BY_FEATURES):
     TASKS = []
     MAX_SAMPLES = 5
 
-    for use_bias in [False]:
+    for use_bias in [True]:
         for qubits in range(1, 5):
             for circuit in CIRCUITS[qubits]:
-                if circuit['name'] not in ['L', 'O']: continue
 
                 for n_feat, datasets_by_class in DATASET_BY_FEATURES.items():
                     for n_classes, datasets_by_name in datasets_by_class.items():
