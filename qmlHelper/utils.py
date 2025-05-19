@@ -44,3 +44,11 @@ def train_ansatz(circuit : callable, n_params : int,
 
   return weights, bias
 
+
+from sklearn import preprocessing
+
+def normalize_X_data(X, minVal=0, maxVal=np.pi):
+  scaler = preprocessing.MinMaxScaler(feature_range=(minVal, maxVal))
+  X_scaled = scaler.fit_transform(X)
+
+  return X_scaled

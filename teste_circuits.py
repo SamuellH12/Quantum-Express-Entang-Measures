@@ -2,13 +2,23 @@ import os
 import pandas as pd
 from local.listDatabases import get_csv_path_list, get_pkl_path_list, get_dataframes_and_samples
 import pickle
-
+from qmlHelper.utils import normalize_X_data
 
 def get_datasets():
     print('getting datasets...')
 
     DATASET_BY_FEATURES = {}
     DATASETS = get_dataframes_and_samples('./local')
+
+    for name, data in DATASETS.items():
+
+        df = data['df']
+        y = df['target']
+        X = pd.DataFrame(normalize_X_data(df.drop(columns=['target'])))
+
+        df = pd.concat([X, y], axis=1)
+        data['df'] = df
+    
     NEW_DATASET = {}
 
     for dt_name in DATASETS:
@@ -16,10 +26,6 @@ def get_datasets():
             NEW_DATASET[dt_name] = DATASETS[dt_name]
 
     DATASETS = NEW_DATASET
-
-    # print(list(DATASETS.keys()))
-    # print(len(DATASETS))
-
 
     # ---------------------------------------------- # 
     # ---------------------------------------------- # 
@@ -191,9 +197,10 @@ def get_tasks(CIRCUITS, DATASET_BY_FEATURES):
     TASKS = []
     MAX_SAMPLES = 5
 
-    for use_bias in [True]:
+    for use_bias in [False]:
         for qubits in range(1, 5):
             for circuit in CIRCUITS[qubits]:
+                if circuit['name'] not in ['L', 'O']: continue
 
                 for n_feat, datasets_by_class in DATASET_BY_FEATURES.items():
                     for n_classes, datasets_by_name in datasets_by_class.items():
