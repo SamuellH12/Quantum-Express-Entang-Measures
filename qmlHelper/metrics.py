@@ -36,7 +36,7 @@ def threshold(output, num_classes=2):
 
 def normalize_0_n(output, num_classes=2):
     if len(output) == 1: # [-1, 1]
-        output = float(output)
+        output = output[0]
         output = (output+1)/2 #[0, 1]
         return output*(num_classes-1) #[0, num_classes-1]
     
@@ -47,19 +47,19 @@ from sklearn.metrics import rand_score, davies_bouldin_score, calinski_harabasz_
 
 
 def square_loss_silhouette(features, predictions, labels, num_classes):
-  if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
+  if(len(predictions) == 1): predictions = np.reshape(predictions, (len(predictions[0]), 1))
   predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
   if len(np.unique(predictions)) == 1: return np.float64(1)
   return np.float64(1 - silhouette_score(features, predictions))
 
 def square_loss_davies_bouldin_score(features, predictions, labels, num_classes):
-  if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
+  if(len(predictions) == 1): predictions = np.reshape(predictions, (len(predictions[0]), 1))
   predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
   if len(np.unique(predictions)) == 1: return np.float64(1)
   return np.float64(davies_bouldin_score( features, predictions))
 
 def square_loss_calinski_harabasz_score(features, predictions, labels, num_classes):
-  if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
+  if(len(predictions) == 1): predictions = np.reshape(predictions, (len(predictions[0]), 1))
   predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
   if len(np.unique(predictions)) == 1: return np.float64(10)
   return np.float64( 1.0 / (1e-5 + calinski_harabasz_score(features, predictions))) # original [0, INF) where INF is better
@@ -79,11 +79,6 @@ def unsupervised_accuracy(circuit, weights, bias, data, label, num_classes, circ
 from pennylane import math as qmlMath
 
 def squared_loss_supervised(features, predictions, labels, num_classes):
-  if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
-#   print("pred", predictions)
+  if(len(predictions) == 1): predictions = np.reshape(predictions, (len(predictions[0]), 1))
   predictions = np.array([ normalize_0_n(pred, num_classes) for pred in predictions ])
-#   print("Label", labels)
-#   print("0n pred", predictions)
-#   print("stak", qmlMath.stack(predictions))
-#   print("diff",(labels - qmlMath.stack(predictions)))
   return np.mean( (labels - qmlMath.stack(predictions)) ** 2)
