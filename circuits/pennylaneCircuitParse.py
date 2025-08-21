@@ -1,4 +1,4 @@
-from circuitFromFile import parse_quantum_file
+from  .circuitFromFile import parse_quantum_file
 import pennylane as qml
 
 CIRCUIT_DEFAULT_ARGS = {'weights': [], 
