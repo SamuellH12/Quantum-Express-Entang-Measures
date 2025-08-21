@@ -22,7 +22,7 @@ def threshold(output, num_classes=2):
         for i in range(num_classes):
             if boundaries[i] <= output < boundaries[i+1]:
                return i
-        return num_classes-1
+        return 0 if output < boundaries[0] else num_classes-1
 
     # multiple qubits
     if len(output) == num_classes:
@@ -34,6 +34,13 @@ def threshold(output, num_classes=2):
     
     raise ValueError(f"Cannot map {output.size} measurement(s) to {num_classes} classes")
 
+def normalize_0_n(output, num_classes=2):
+    if len(output) == 1: # [-1, 1]
+        output = float(output)
+        output = (output+1)/2 #[0, 1]
+        return output*(num_classes-1) #[0, num_classes-1]
+    
+    raise ValueError(f"Cannot map {output.size} measurements to [0, {num_classes-1}] interval")
 
 from sklearn.metrics.cluster import silhouette_score
 from sklearn.metrics import rand_score, davies_bouldin_score, calinski_harabasz_score
@@ -67,3 +74,16 @@ def unsupervised_accuracy(circuit, weights, bias, data, label, num_classes, circ
    predictions = np.array([ threshold(pred, num_classes) for pred in predictions ])
    
    return adjusted_rand_score(label, predictions)
+
+
+from pennylane import math as qmlMath
+
+def squared_loss_supervised(features, predictions, labels, num_classes):
+  if(len(predictions) == 1): predictions = np.array(predictions).reshape(len(predictions[0]), 1)
+#   print("pred", predictions)
+  predictions = np.array([ normalize_0_n(pred, num_classes) for pred in predictions ])
+#   print("Label", labels)
+#   print("0n pred", predictions)
+#   print("stak", qmlMath.stack(predictions))
+#   print("diff",(labels - qmlMath.stack(predictions)))
+  return np.mean( (labels - qmlMath.stack(predictions)) ** 2)
